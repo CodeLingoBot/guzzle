@@ -169,37 +169,7 @@ class HandlerStackTest extends TestCase
         $this->assertSame('foo=bar', $lastRequest->getHeaderLine('Cookie'));
     }
 
-    private function getFunctions()
-    {
-        $calls = [];
-
-        $a = function (callable $next) use (&$calls) {
-            return function ($v) use ($next, &$calls) {
-                $calls[] = ['a', $v];
-                return $next($v . '1');
-            };
-        };
-
-        $b = function (callable $next) use (&$calls) {
-            return function ($v) use ($next, &$calls) {
-                $calls[] = ['b', $v];
-                return $next($v . '2');
-            };
-        };
-
-        $c = function (callable $next) use (&$calls) {
-            return function ($v) use ($next, &$calls) {
-                $calls[] = ['c', $v];
-                return $next($v . '3');
-            };
-        };
-
-        $handler = function ($v) {
-            return 'Hello - ' . $v;
-        };
-
-        return [&$calls, $handler, $a, $b, $c];
-    }
+    
 
     public static function foo() {}
     public function bar () {}

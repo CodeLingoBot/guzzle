@@ -175,15 +175,5 @@ class MockHandler implements \Countable
         return count($this->queue);
     }
 
-    private function invokeStats(
-        RequestInterface $request,
-        array $options,
-        ResponseInterface $response = null,
-        $reason = null
-    ) {
-        if (isset($options['on_stats'])) {
-            $stats = new TransferStats($request, $response, 0, $reason);
-            call_user_func($options['on_stats'], $stats);
-        }
-    }
+    
 }

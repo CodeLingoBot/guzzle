@@ -18,16 +18,7 @@ use PHPUnit\Framework\TestCase;
  */
 class StreamHandlerTest extends TestCase
 {
-    private function queueRes()
-    {
-        Server::flush();
-        Server::enqueue([
-            new Response(200, [
-                'Foo' => 'Bar',
-                'Content-Length' => 8,
-            ], 'hi there')
-        ]);
-    }
+    
 
     public function testReturnsResponseForSuccessfulRequest()
     {

@@ -209,16 +209,7 @@ class HandlerStack
      * @param string $name
      * @return int
      */
-    private function findByName($name)
-    {
-        foreach ($this->stack as $k => $v) {
-            if ($v[1] === $name) {
-                return $k;
-            }
-        }
-
-        throw new \InvalidArgumentException("Middleware not found: $name");
-    }
+    
 
     /**
      * Splices a function into the middleware list at a specific position.
@@ -228,26 +219,7 @@ class HandlerStack
      * @param callable $middleware
      * @param bool     $before
      */
-    private function splice($findName, $withName, callable $middleware, $before)
-    {
-        $this->cached = null;
-        $idx = $this->findByName($findName);
-        $tuple = [$middleware, $withName];
-
-        if ($before) {
-            if ($idx === 0) {
-                array_unshift($this->stack, $tuple);
-            } else {
-                $replacement = [$tuple, $this->stack[$idx]];
-                array_splice($this->stack, $idx, 1, $replacement);
-            }
-        } elseif ($idx === count($this->stack) - 1) {
-            $this->stack[] = $tuple;
-        } else {
-            $replacement = [$this->stack[$idx], $tuple];
-            array_splice($this->stack, $idx, 1, $replacement);
-        }
-    }
+    
 
     /**
      * Provides a debug string for a given callable.
@@ -256,18 +228,5 @@ class HandlerStack
      *
      * @return string
      */
-    private function debugCallable($fn)
-    {
-        if (is_string($fn)) {
-            return "callable({$fn})";
-        }
-
-        if (is_array($fn)) {
-            return is_string($fn[0])
-                ? "callable({$fn[0]}::{$fn[1]})"
-                : "callable(['" . get_class($fn[0]) . "', '{$fn[1]}'])";
-        }
-
-        return 'callable(' . spl_object_hash($fn) . ')';
-    }
+    
 }

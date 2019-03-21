@@ -118,38 +118,9 @@ class RedirectMiddleware
         return $promise;
     }
 
-    private function withTracking(PromiseInterface $promise, $uri, $statusCode)
-    {
-        return $promise->then(
-            function (ResponseInterface $response) use ($uri, $statusCode) {
-                // Note that we are pushing to the front of the list as this
-                // would be an earlier response than what is currently present
-                // in the history header.
-                $historyHeader = $response->getHeader(self::HISTORY_HEADER);
-                $statusHeader = $response->getHeader(self::STATUS_HISTORY_HEADER);
-                array_unshift($historyHeader, $uri);
-                array_unshift($statusHeader, $statusCode);
-                return $response->withHeader(self::HISTORY_HEADER, $historyHeader)
-                                ->withHeader(self::STATUS_HISTORY_HEADER, $statusHeader);
-            }
-        );
-    }
+    
 
-    private function guardMax(RequestInterface $request, array &$options)
-    {
-        $current = isset($options['__redirect_count'])
-            ? $options['__redirect_count']
-            : 0;
-        $options['__redirect_count'] = $current + 1;
-        $max = $options['allow_redirects']['max'];
-
-        if ($options['__redirect_count'] > $max) {
-            throw new TooManyRedirectsException(
-                "Will not follow more than {$max} redirects",
-                $request
-            );
-        }
-    }
+    
 
     /**
      * @param RequestInterface  $request
@@ -209,29 +180,5 @@ class RedirectMiddleware
      *
      * @return UriInterface
      */
-    private function redirectUri(
-        RequestInterface $request,
-        ResponseInterface $response,
-        array $protocols
-    ) {
-        $location = Psr7\UriResolver::resolve(
-            $request->getUri(),
-            new Psr7\Uri($response->getHeaderLine('Location'))
-        );
-
-        // Ensure that the redirect URI is allowed based on the protocols.
-        if (!in_array($location->getScheme(), $protocols)) {
-            throw new BadResponseException(
-                sprintf(
-                    'Redirect URI, %s, does not use one of the allowed redirect protocols: %s',
-                    $location,
-                    implode(', ', $protocols)
-                ),
-                $request,
-                $response
-            );
-        }
-
-        return $location;
-    }
+    
 }

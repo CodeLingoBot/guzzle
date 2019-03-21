@@ -306,21 +306,7 @@ EOT
      *
      * @return string
      */
-    private function createStub($dest, $autoloaderFilename = 'autoloader.php')
-    {
-        $this->startSection('stub');
-        $this->debug("Creating phar stub at $dest");
-
-        $alias = basename($dest);
-        $constName = str_replace('.phar', '', strtoupper($alias)) . '_PHAR';
-        $stub  = "<?php\n";
-        $stub .= "define('$constName', true);\n";
-        $stub .= "require 'phar://$alias/{$autoloaderFilename}';\n";
-        $stub .= "__HALT_COMPILER();\n";
-        $this->endSection();
-
-        return $stub;
-    }
+    
 
     /**
      * Creates a phar that automatically registers an autoloader.
@@ -376,10 +362,5 @@ EOT
         $this->endSection();
     }
 
-    private function createDirIfNeeded($dir)
-    {
-        if (!is_dir($dir) && !mkdir($dir, 0755, true)) {
-            throw new \RuntimeException("Could not create dir: $dir");
-        }
-    }
+    
 }

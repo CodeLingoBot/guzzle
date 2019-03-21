@@ -168,13 +168,5 @@ class MessageFormatter
         );
     }
 
-    private function headers(MessageInterface $message)
-    {
-        $result = '';
-        foreach ($message->getHeaders() as $name => $values) {
-            $result .= $name . ': ' . implode(', ', $values) . "\r\n";
-        }
-
-        return trim($result);
-    }
+    
 }

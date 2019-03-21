@@ -132,17 +132,7 @@ class CurlMultiHandler
         }
     }
 
-    private function addRequest(array $entry)
-    {
-        $easy = $entry['easy'];
-        $id = (int) $easy->handle;
-        $this->handles[$id] = $entry;
-        if (empty($easy->options['delay'])) {
-            curl_multi_add_handle($this->_mh, $easy->handle);
-        } else {
-            $this->delays[$id] = microtime(true) + ($easy->options['delay'] / 1000);
-        }
-    }
+    
 
     /**
      * Cancels a handle from sending and removes references to it.
@@ -151,55 +141,9 @@ class CurlMultiHandler
      *
      * @return bool True on success, false on failure.
      */
-    private function cancel($id)
-    {
-        // Cannot cancel if it has been processed.
-        if (!isset($this->handles[$id])) {
-            return false;
-        }
+    
 
-        $handle = $this->handles[$id]['easy']->handle;
-        unset($this->delays[$id], $this->handles[$id]);
-        curl_multi_remove_handle($this->_mh, $handle);
-        curl_close($handle);
+    
 
-        return true;
-    }
-
-    private function processMessages()
-    {
-        while ($done = curl_multi_info_read($this->_mh)) {
-            $id = (int) $done['handle'];
-            curl_multi_remove_handle($this->_mh, $done['handle']);
-
-            if (!isset($this->handles[$id])) {
-                // Probably was cancelled.
-                continue;
-            }
-
-            $entry = $this->handles[$id];
-            unset($this->handles[$id], $this->delays[$id]);
-            $entry['easy']->errno = $done['result'];
-            $entry['deferred']->resolve(
-                CurlFactory::finish(
-                    $this,
-                    $entry['easy'],
-                    $this->factory
-                )
-            );
-        }
-    }
-
-    private function timeToNext()
-    {
-        $currentTime = microtime(true);
-        $nextTime = PHP_INT_MAX;
-        foreach ($this->delays as $time) {
-            if ($time < $nextTime) {
-                $nextTime = $time;
-            }
-        }
-
-        return max(0, $nextTime - $currentTime) * 1000000;
-    }
+    
 }

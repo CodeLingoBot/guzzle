@@ -165,13 +165,5 @@ class PoolTest extends TestCase
         $this->assertSame($keys, array_keys($requests));
     }
 
-    private function getClient($total = 1)
-    {
-        $queue = [];
-        for ($i = 0; $i < $total; $i++) {
-            $queue[] = new Response();
-        }
-        $handler = new MockHandler($queue);
-        return new Client(['handler' => $handler]);
-    }
+    
 }

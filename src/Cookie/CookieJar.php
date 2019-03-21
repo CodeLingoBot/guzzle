@@ -251,24 +251,7 @@ class CookieJar implements CookieJarInterface
      * @param RequestInterface $request
      * @return string
      */
-    private function getCookiePathFromRequest(RequestInterface $request)
-    {
-        $uriPath = $request->getUri()->getPath();
-        if (''  === $uriPath) {
-            return '/';
-        }
-        if (0 !== strpos($uriPath, '/')) {
-            return '/';
-        }
-        if ('/' === $uriPath) {
-            return '/';
-        }
-        if (0 === $lastSlashPos = strrpos($uriPath, '/')) {
-            return '/';
-        }
-
-        return substr($uriPath, 0, $lastSlashPos);
-    }
+    
 
     public function withCookieHeader(RequestInterface $request)
     {
@@ -300,15 +283,5 @@ class CookieJar implements CookieJarInterface
      *
      * @param SetCookie $cookie
      */
-    private function removeCookieIfEmpty(SetCookie $cookie)
-    {
-        $cookieValue = $cookie->getValue();
-        if ($cookieValue === null || $cookieValue === '') {
-            $this->clear(
-                $cookie->getDomain(),
-                $cookie->getPath(),
-                $cookie->getName()
-            );
-        }
-    }
+    
 }

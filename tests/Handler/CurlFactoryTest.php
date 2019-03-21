@@ -173,22 +173,7 @@ class CurlFactoryTest extends TestCase
         $this->checkNoProxyForHost('http://127.0.0.1', ['127.0.0.*'], true);
     }
 
-    private function checkNoProxyForHost($url, $noProxy, $assertUseProxy)
-    {
-        $f = new Handler\CurlFactory(3);
-        $f->create(new Psr7\Request('GET', $url), [
-            'proxy' => [
-                'http' => 'http://bar.com',
-                'https' => 'https://t',
-                'no' => $noProxy
-            ],
-        ]);
-        if ($assertUseProxy) {
-            $this->assertArrayHasKey(CURLOPT_PROXY, $_SERVER['_curl']);
-        } else {
-            $this->assertArrayNotHasKey(CURLOPT_PROXY, $_SERVER['_curl']);
-        }
-    }
+    
 
 
     /**
@@ -285,18 +270,7 @@ class CurlFactoryTest extends TestCase
         }
     }
 
-    private function addDecodeResponse($withEncoding = true)
-    {
-        $content = gzencode('test');
-        $headers = ['Content-Length' => strlen($content)];
-        if ($withEncoding) {
-            $headers['Content-Encoding'] = 'gzip';
-        }
-        $response  = new Psr7\Response(200, $headers, $content);
-        Server::flush();
-        Server::enqueue([$response]);
-        return $content;
-    }
+    
 
     public function testDecodesGzippedResponses()
     {

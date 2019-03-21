@@ -74,42 +74,9 @@ class RetryMiddleware
             );
     }
 
-    private function onFulfilled(RequestInterface $req, array $options)
-    {
-        return function ($value) use ($req, $options) {
-            if (!call_user_func(
-                $this->decider,
-                $options['retries'],
-                $req,
-                $value,
-                null
-            )) {
-                return $value;
-            }
-            return $this->doRetry($req, $options, $value);
-        };
-    }
+    
 
-    private function onRejected(RequestInterface $req, array $options)
-    {
-        return function ($reason) use ($req, $options) {
-            if (!call_user_func(
-                $this->decider,
-                $options['retries'],
-                $req,
-                null,
-                $reason
-            )) {
-                return \GuzzleHttp\Promise\rejection_for($reason);
-            }
-            return $this->doRetry($req, $options);
-        };
-    }
+    
 
-    private function doRetry(RequestInterface $request, array $options, ResponseInterface $response = null)
-    {
-        $options['delay'] = call_user_func($this->delay, ++$options['retries'], $response);
-
-        return $this($request, $options);
-    }
+    
 }

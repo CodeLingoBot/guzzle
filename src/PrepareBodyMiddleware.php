@@ -66,41 +66,5 @@ class PrepareBodyMiddleware
         return $fn(Psr7\modify_request($request, $modify), $options);
     }
 
-    private function addExpectHeader(
-        RequestInterface $request,
-        array $options,
-        array &$modify
-    ) {
-        // Determine if the Expect header should be used
-        if ($request->hasHeader('Expect')) {
-            return;
-        }
-
-        $expect = isset($options['expect']) ? $options['expect'] : null;
-
-        // Return if disabled or if you're not using HTTP/1.1 or HTTP/2.0
-        if ($expect === false || $request->getProtocolVersion() < 1.1) {
-            return;
-        }
-
-        // The expect header is unconditionally enabled
-        if ($expect === true) {
-            $modify['set_headers']['Expect'] = '100-Continue';
-            return;
-        }
-
-        // By default, send the expect header when the payload is > 1mb
-        if ($expect === null) {
-            $expect = 1048576;
-        }
-
-        // Always add if the body cannot be rewound, the size cannot be
-        // determined, or the size is greater than the cutoff threshold
-        $body = $request->getBody();
-        $size = $body->getSize();
-
-        if ($size === null || $size >= (int) $expect || !$body->isSeekable()) {
-            $modify['set_headers']['Expect'] = '100-Continue';
-        }
-    }
+    
 }
